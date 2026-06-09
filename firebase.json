@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "dot-tribe",
     "public": "dist",
     "ignore": [
       "firebase.json",
