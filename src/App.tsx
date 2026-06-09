@@ -259,8 +259,8 @@ export default function App() {
 
   const handleNavbarLinkUp = async () => {
     if (!uid) {
-      // Trigger login, but do not auto-open onboarding modal (just log them in)
-      triggerOnboardingOnLoad.current = false
+      // Trigger login, and automatically flag the onboarding modal to open once logged in
+      triggerOnboardingOnLoad.current = true
       await handleGoogleSignIn()
     } else if (user && user.status === 'idle') {
       setShowOnboarding(true)
