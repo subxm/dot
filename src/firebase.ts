@@ -485,7 +485,7 @@ function triggerNotesListeners() {
 async function mockSignIn(): Promise<SignInResult> {
   try {
     const google = await loadGoogleGsiScript();
-    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "221994657450-e1fj9dmupj3bvlmb3n55i6cf2kpi2suv.apps.googleusercontent.com";
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "735744088698-7md7s0voc0tam7vage0ah5fnr0tj6vmm.apps.googleusercontent.com";
 
     if (!clientId) {
       throw new Error("VITE_GOOGLE_CLIENT_ID is not configured.");
