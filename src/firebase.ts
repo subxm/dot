@@ -17,11 +17,11 @@ import {
 
 // These keys can be replaced with real configuration via .env
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyB5-TApq_8CrrOEai32TeiWIW3iwETC1ss",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "dotproject-ad06a.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "dotproject-ad06a",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "dotproject-ad06a.appspot.com",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "221994657450",
   appId: import.meta.env.VITE_FIREBASE_APP_ID || ""
 };
 
@@ -485,10 +485,10 @@ function triggerNotesListeners() {
 async function mockSignIn(): Promise<SignInResult> {
   try {
     const google = await loadGoogleGsiScript();
-    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "221994657450-e1fj9dmupj3bvlmb3n55i6cf2kpi2suv.apps.googleusercontent.com";
 
     if (!clientId) {
-      throw new Error("VITE_GOOGLE_CLIENT_ID is not configured in .env file.");
+      throw new Error("VITE_GOOGLE_CLIENT_ID is not configured.");
     }
 
     return new Promise((resolve, reject) => {
