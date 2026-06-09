@@ -1,13 +1,23 @@
 <div align="center">
+  <img src="src/assets/hero.png" alt="dot. Logo / Hero Banner" width="120" style="border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);" />
   
   # dot.
   
   ### *Daily progress. Silent support.*
   
-  [Philosophy](#-the-philosophy) • [The Protocol](#-the-protocol) • [Tech Stack](#-technical-architecture) • [Getting Started](#-getting-started)
+  A premium, distraction-free 1:1 anonymous habit accountability partner network.
+  
+  [![Stars](https://img.shields.io/github/stars/subxm/DOT?style=for-the-badge&color=6366f1&logo=github)](https://github.com/subxm/DOT/stargazers)
+  [![Forks](https://img.shields.io/github/forks/subxm/DOT?style=for-the-badge&color=4f46e5&logo=github)](https://github.com/subxm/DOT/network/members)
+  [![Issues](https://img.shields.io/github/issues/subxm/DOT?style=for-the-badge&color=ec4899&logo=github)](https://github.com/subxm/DOT/issues)
+  [![License](https://img.shields.io/github/license/subxm/DOT?style=for-the-badge&color=10b981)](https://github.com/subxm/DOT/blob/main/LICENSE)
 
   <br />
+
+  [Philosophy](#-the-philosophy) • [The Protocol](#-the-protocol) • [Aesthetics](#-ui--aesthetics) • [Tech Stack](#-technical-architecture) • [Getting Started](#-getting-started)
 </div>
+
+---
 
 **dot.** is a premium, distraction-free 1:1 anonymous habit accountability partner web application. Built with **React 19**, **Vite**, **Tailwind CSS v4**, and **Google Identity Services (GSI) OAuth**, it helps users build consistent habits in Coding, Fitness, Writing, and Mindfulness.
 
@@ -15,53 +25,83 @@ Unlike traditional, noisy social tracking apps that distract you with infinite s
 
 ---
 
-## 🎨 Key Features & Aesthetic Elements
+## 🌌 The Philosophy
 
-### ✦ Premium Minimalist UI
-- **Beach Background & Nokia Overlay**: A calming beach video background featuring a retro Nokia 3310 mockup. The retro phone screen dynamically types messaging prompts (`Are you here?`, `Yes, I am.`, `Speak soon.`) to set a quiet, consistent mood.
-- **Glassmorphism**: Floating components use polished border highlights and backdrop blur filters (`backdrop-blur-md bg-white/20 border-black/10`).
-- **Floating User Profile**: Your Google avatar and status badge float in the top-right corner, completely separate from the centered capsule Navbar to preserve visual balance.
+In a world full of social networks designed to capture your attention and sell it, **dot.** is built to protect your focus. We believe that true self-improvement happens in silence and through consistent, daily effort.
 
-### ✦ Direct Google OAuth (No Passwords)
-- **Zero Friction**: Removed intermediate login walls. Clicking "Sign in" directly launches the official Google Account popup chooser.
-- **Real Profiles**: Dynamically fetches your Google account's display name, email, and avatar picture.
-- **Refresh Persistence**: Google user identifiers and session states are securely cached in LocalStorage to prevent onboarding prompts from popping up on page refresh.
-
-### ✦ The Reciprocal "Frosted Blur"
-- **Transparency Locked**: To prevent passive consumption, your partner's logged daily task is locked behind a frosted blur overlay.
-- **The Key**: Submitting your own check-in (maximum 280 characters) unlocks and reveals what your partner achieved today.
-
-### ✦ shared Fire Streaks
-- **Mutual Commitment**: Both partners must check in before UTC midnight to increase their shared fire streak (`🔥`). If either partner fails to check in, the fire resets to zero.
-- **Clean Severing**: Severing a partnership resets the streak to 0, returning both users to their respective matching pools.
+*   **Zero Social Noise:** No likes, no comments, no emojis, no feeds. Your buddy's output is all that matters.
+*   **Absolute Anonymity:** Real names, email addresses, and photos are completely hidden. You only know your partner by their commitment and their output.
+*   **Strict Reciprocity:** You cannot consume without contributing. Your partner's daily update remains blurred until you submit your own.
 
 ---
 
 ## ⚙️ The Protocol (How it Works)
 
-1. **Commit**: Log in with Google, choose a tribe (💻 Coding, 🏋️ Fitness, ✍️ Writing, 🧘 Mindfulness), and write your daily goal description (max 60 characters).
-2. **Match**: The matching engine pairs you with one anonymous partner committing to the same discipline. You cannot see their email, name, or photo—only their goal description.
-3. **Write**: Post what you accomplished today toward your goal (max 280 characters) before the countdown reaches 00:00:00 UTC.
-4. **Reveal**: Instantly unblur your buddy's progress log for the day and fuel your shared streak.
+The workflow is designed to be minimal, clean, and highly motivating. Below is a high-level representation of the matching and check-in protocol:
+
+```mermaid
+flowchart TD
+    A[Google OAuth Login] --> B[Choose Tribe & Goal]
+    B --> C{Matching Engine}
+    C -->|Pair Found| D[Active 1:1 Partnership]
+    D --> E[Daily Task Logged]
+    E --> F{Both Checked In Today?}
+    F -->|No| G[Partner's Log is Blurred ❄️]
+    F -->|Yes| H[Frosted Blur Unlocked 🔓]
+    H --> I[View Partner's Progress]
+    I --> J[Increment Fire Streak 🔥]
+    F -->|Midnight UTC Passes & Missed| K[Streak Resets to 0 📉]
+```
+
+### 1. Commit
+Log in with Google, choose a tribe (💻 Coding, 🏋️ Fitness, ✍️ Writing, 🧘 Mindfulness), and write your daily goal description (max 60 characters).
+
+### 2. Match
+The matching engine pairs you with one anonymous partner committing to the same discipline. You cannot see their email, name, or photo—only their goal description.
+
+### 3. Write
+Post what you accomplished today toward your goal (max 280 characters) before the countdown reaches `00:00:00 UTC`.
+
+### 4. Reveal
+Instantly unblur your buddy's progress log for the day and fuel your shared streak.
+
+---
+
+## 🎨 UI & Aesthetics
+
+The interface is built to feel premium, tactile, and nostalgic, mimicking physical devices and using modern design patterns.
+
+*   **Retro Nokia 3310 Console:** A core visual mockup representing focus. The retro screen dynamically types messaging prompts (`Are you here?`, `Yes, I am.`, `Speak soon.`) to set a quiet, consistent mood.
+*   **Polished Glassmorphism:** Translucent UI elements featuring custom background blurs, subtle borders, and smooth hover translations (`backdrop-blur-md bg-white/20 border-black/10`).
+*   **Floating Avatar & Status Capsule:** Your Google avatar floats on the extreme right of the viewport, outside the centered capsule Navbar to preserve visual balance.
+*   **Consistency Grid:** A calendar grid visible inside your profile slide-out drawer that displays check-in history. Fresh accounts start with 0 check-ins, tracking your genuine streak progress day by day.
+*   **Interactive Info Drawer:** Beautiful tabbed modal highlighting:
+    *   **The Protocol** (Philosophy & comparisons)
+    *   **Trust & Privacy** (Data protection)
+    *   **Access & Flow** (Guidelines)
+    *   **Tribe Matching** (Rules)
 
 ---
 
 ## 🛠️ Technical Architecture
 
-- **Core Framework**: React 19 (TypeScript)
-- **Bundler**: Vite
-- **Styling**: Tailwind CSS v4 (Vanilla HSL-tailored custom color systems)
-- **Animations**: Framer Motion (`motion/react`)
-- **Authentication**: Direct Google Identity Services (GSI) API token client integration
-- **Database/Backend (Unified API)**:
-  - **Live Mode**: Firebase Auth & Firestore real-time snapshot sync (triggered when configuration is present in `.env`).
-  - **Demo/Mock Mode**: High-fidelity in-memory state engine mirrored dynamically in `LocalStorage` with support for profile consistency calendars, matchmaking, notes submissions, and streak calculations.
+**dot.** is built using a modern, performant, and type-safe front-end stack:
+
+*   **Core Framework:** React 19 (TypeScript)
+*   **Build Tool:** Vite
+*   **Styling:** Tailwind CSS v4 (Vanilla HSL-tailored custom color systems)
+*   **Animations:** Framer Motion (`motion/react`)
+*   **Authentication:** Direct Google Identity Services (GSI) API token client integration
+*   **Database/Backend (Unified API):**
+    *   **Live Mode:** Firebase Auth & Firestore real-time snapshot sync (triggered when configuration is present in `.env`).
+    *   **Demo/Mock Mode:** High-fidelity in-memory state engine mirrored dynamically in `LocalStorage` with support for profile consistency calendars, matchmaking, notes submissions, and streak calculations.
 
 ---
 
 ## 🚀 Getting Started
 
 ### 1. Clone & Install
+
 ```bash
 # Clone the repository
 git clone https://github.com/subxm/DOT.git
@@ -72,22 +112,26 @@ npm install
 ```
 
 ### 2. Configure Environment Variables
+
 Create a `.env` file in the root directory and add your Google OAuth Client ID:
+
 ```env
 VITE_GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
 ```
 
-*Optional Live Mode setup*: If you wish to connect to a live Firebase backend, add your Firebase config keys:
-```env
-VITE_FIREBASE_API_KEY=your-api-key
-VITE_FIREBASE_AUTH_DOMAIN=your-auth-domain
-VITE_FIREBASE_PROJECT_ID=your-project-id
-VITE_FIREBASE_STORAGE_BUCKET=your-storage-bucket
-VITE_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
-VITE_FIREBASE_APP_ID=your-app-id
-```
+> [!NOTE]
+> **Optional Live Mode Setup:** If you wish to connect to a live Firebase backend, add your Firebase config keys to `.env`:
+> ```env
+> VITE_FIREBASE_API_KEY=your-api-key
+> VITE_FIREBASE_AUTH_DOMAIN=your-auth-domain
+> VITE_FIREBASE_PROJECT_ID=your-project-id
+> VITE_FIREBASE_STORAGE_BUCKET=your-storage-bucket
+> VITE_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
+> VITE_FIREBASE_APP_ID=your-app-id
+> ```
 
 ### 3. Run Locally
+
 ```bash
 # Start Vite development server
 npm run dev
@@ -95,6 +139,7 @@ npm run dev
 Open `http://localhost:5173` in your browser.
 
 ### 4. Build for Production
+
 ```bash
 # Compile TypeScript and compile assets
 npm run build
