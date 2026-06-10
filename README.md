@@ -60,6 +60,51 @@ Once you submit your check-in, your partner's log is unblurred. If both of you c
 
 ---
 
+## 🗄️ Database Schema
+
+Below is the database structure representing how users, pairings, and progress logs (notes) are modeled and related:
+
+```mermaid
+erDiagram
+    USERS {
+        string uid PK
+        string status "idle | matching | paired"
+        string currentPeerId
+        string currentPairingId FK
+        string habitCategory
+        string goalDescription
+        timestamp joinedMatchingAt
+        string displayName
+        string photoURL
+    }
+
+    PAIRINGS {
+        string id PK
+        array_string users "[uid1, uid2]"
+        string habitCategory
+        boolean active
+        int streakCount
+        string lastActiveDateCode "YYYY-MM-DD"
+        timestamp createdAt
+        timestamp disconnectedAt
+    }
+
+    NOTES {
+        string id PK
+        string pairingId FK
+        string senderId FK
+        string content "max 280 chars"
+        string dateCode "YYYY-MM-DD"
+        timestamp createdAt
+    }
+
+    USERS ||--o| PAIRINGS : "participates in"
+    PAIRINGS ||--o{ NOTES : "contains logs"
+    USERS ||--o{ NOTES : "writes log"
+```
+
+---
+
 <div align="center">
   <p>Created with dedication to quiet consistency. ✦</p>
 </div>
