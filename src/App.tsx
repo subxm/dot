@@ -350,7 +350,6 @@ export default function App() {
         <Dashboard 
           uid={uid} 
           userState={user} 
-          onOpenInfo={handleOpenInfo}
         />
       ) : (
         <div className="relative w-full flex flex-col">

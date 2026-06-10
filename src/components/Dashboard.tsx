@@ -22,10 +22,9 @@ function formatNoteTime(createdAt: any): string {
 interface DashboardProps {
   uid: string;
   userState: UserState;
-  onOpenInfo: (tab: 'philosophy' | 'trust' | 'access' | 'tribe') => void;
 }
 
-export function Dashboard({ uid, userState, onOpenInfo }: DashboardProps) {
+export function Dashboard({ uid, userState }: DashboardProps) {
   const [notes, setNotes] = useState<Note[]>([])
   const [noteInput, setNoteInput] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -217,12 +216,6 @@ export function Dashboard({ uid, userState, onOpenInfo }: DashboardProps) {
           </div>
 
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => onOpenInfo('philosophy')}
-              className="font-sans text-[13px] text-[#1a1a1a]/60 hover:text-[#1a1a1a] transition-colors cursor-pointer"
-            >
-              How it works
-            </button>
             <button
               onClick={() => setShowDisconnectConfirm(true)}
               className="px-4 py-1.5 rounded-full text-rose-600 bg-rose-50 hover:bg-rose-100/50 active:scale-[0.98] transition-all font-sans text-[12px] font-medium cursor-pointer"
