@@ -220,12 +220,9 @@ export default function App() {
       setUser(state)
       setIsAuthLoading(false)
       
-      // Show goal onboarding modal if user is idle AND we explicitly flagged it (after clicking Link up to sign in)
+      // Show goal onboarding modal automatically if user is idle (hasn't chosen a tribe/goal yet)
       if (state && state.status === "idle") {
-        if (triggerOnboardingOnLoad.current) {
-          setShowOnboarding(true)
-          triggerOnboardingOnLoad.current = false
-        }
+        setShowOnboarding(true)
       }
     })
 
