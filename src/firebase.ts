@@ -163,15 +163,7 @@ async function liveStartMatching(uid: string, category: HabitCategory, goal: str
   const userRef = doc(db, "users", uid);
   
   await runTransaction(db, async (transaction) => {
-    // 1. Join matching pool by writing goal and category
-    transaction.update(userRef, {
-      status: "matching",
-      habitCategory: category,
-      goalDescription: goal,
-      joinedMatchingAt: serverTimestamp()
-    });
-    
-    // 2. Query for another user in matching status with the SAME category
+    // 1. READ: Query for another user in matching status with the SAME category
     const matchingQuery = query(
       collection(db, "users"),
       where("status", "==", "matching"),
@@ -182,6 +174,7 @@ async function liveStartMatching(uid: string, category: HabitCategory, goal: str
     
     const matchingSnap = await getDocs(matchingQuery);
     
+    // 2. WRITES (At the end!)
     if (!matchingSnap.empty) {
       // Match found!
       const peerDoc = matchingSnap.docs[0];
@@ -211,7 +204,17 @@ async function liveStartMatching(uid: string, category: HabitCategory, goal: str
       transaction.update(userRef, {
         status: "paired",
         currentPeerId: peerId,
-        currentPairingId: pairingId
+        currentPairingId: pairingId,
+        habitCategory: category,
+        goalDescription: goal
+      });
+    } else {
+      // No match found: Join matching pool by writing goal and category
+      transaction.update(userRef, {
+        status: "matching",
+        habitCategory: category,
+        goalDescription: goal,
+        joinedMatchingAt: serverTimestamp()
       });
     }
   });
@@ -268,19 +271,14 @@ async function liveSubmitDailyNote(pairingId: string, uid: string, content: stri
   const userRef = doc(db, "users", uid);
   
   await runTransaction(db, async (transaction) => {
-    // Write note
-    const noteRef = doc(notesRef);
-    transaction.set(noteRef, {
-      pairingId,
-      senderId: uid,
-      content,
-      dateCode,
-      createdAt: serverTimestamp()
-    });
-    
+    // 1. READS
     // Check if peer has already submitted today
     const userSnap = await transaction.get(userRef);
     const peerId = userSnap.data()?.currentPeerId;
+    
+    let pairingSnap = null;
+    let shouldUpdateStreak = false;
+    let currentStreak = 0;
     
     if (peerId) {
       const todayPeerNotesQuery = query(
@@ -295,11 +293,11 @@ async function liveSubmitDailyNote(pairingId: string, uid: string, content: stri
       if (!peerNotesSnap.empty) {
         // Both checked in today! Update pairing streak
         const pairingRef = doc(db, "pairings", pairingId);
-        const pairingSnap = await transaction.get(pairingRef);
+        pairingSnap = await transaction.get(pairingRef);
         
         if (pairingSnap.exists()) {
           const lastActive = pairingSnap.data().lastActiveDateCode;
-          let currentStreak = pairingSnap.data().streakCount || 0;
+          currentStreak = pairingSnap.data().streakCount || 0;
           
           const yesterday = new Date();
           yesterday.setUTCDate(yesterday.getUTCDate() - 1);
@@ -311,13 +309,28 @@ async function liveSubmitDailyNote(pairingId: string, uid: string, content: stri
             // Streak broken or brand new
             currentStreak = 1;
           }
-          
-          transaction.update(pairingRef, {
-            streakCount: currentStreak,
-            lastActiveDateCode: dateCode
-          });
         }
+        shouldUpdateStreak = true;
       }
+    }
+    
+    // 2. WRITES (At the end!)
+    // Write note
+    const noteRef = doc(notesRef);
+    transaction.set(noteRef, {
+      pairingId,
+      senderId: uid,
+      content,
+      dateCode,
+      createdAt: serverTimestamp()
+    });
+    
+    if (shouldUpdateStreak && pairingSnap && pairingSnap.exists()) {
+      const pairingRef = doc(db, "pairings", pairingId);
+      transaction.update(pairingRef, {
+        streakCount: currentStreak,
+        lastActiveDateCode: dateCode
+      });
     }
   });
 }
