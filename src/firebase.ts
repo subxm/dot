@@ -97,11 +97,12 @@ async function liveSignIn(): Promise<SignInResult> {
 function liveObserveUser(uid: string, callback: (user: UserState | null) => void): () => void {
   const userRef = doc(db, "users", uid);
   
-  // Real-time listener for the user's document
-  return onSnapshot(userRef, async (snapshot) => {
+  let pairingUnsubscribe: (() => void) | null = null;
+  let lastPairingId: string | null = null;
+  let currentState: UserState | null = null;
+  
+  const userUnsubscribe = onSnapshot(userRef, async (snapshot) => {
     if (!snapshot.exists()) {
-      // If we authenticated but user doc doesn't exist yet, we'll write it on observe initial run
-      // Grab credentials from currentUser if available
       const currentUser = auth?.currentUser;
       const initialUser: UserState = {
         uid,
@@ -134,29 +135,59 @@ function liveObserveUser(uid: string, callback: (user: UserState | null) => void
       photoURL: userData.photoURL || null
     };
 
-    // If paired, gather peer's goal and pairing streak
-    if (state.status === "paired" && state.currentPeerId && state.currentPairingId) {
-      try {
-        const [peerSnap, pairingSnap] = await Promise.all([
-          getDoc(doc(db, "users", state.currentPeerId)),
-          getDoc(doc(db, "pairings", state.currentPairingId))
-        ]);
+    currentState = state;
 
+    // Manage pairing subscription reactively
+    if (state.status === "paired" && state.currentPairingId && state.currentPeerId) {
+      // 1. Fetch peer goal once
+      try {
+        const peerSnap = await getDoc(doc(db, "users", state.currentPeerId));
         if (peerSnap.exists()) {
           state.peerGoal = peerSnap.data().goalDescription || null;
         }
-        if (pairingSnap.exists()) {
-          state.streakCount = pairingSnap.data().streakCount || 0;
-        }
       } catch (err) {
-        console.error("Error fetching peer/pairing details:", err);
+        console.error("Error fetching peer goal:", err);
       }
-    }
 
-    callback(state);
+      // 2. Setup pairing snapshot listener if new or changed
+      if (state.currentPairingId !== lastPairingId) {
+        if (pairingUnsubscribe) {
+          pairingUnsubscribe();
+        }
+        lastPairingId = state.currentPairingId;
+
+        const pairingRef = doc(db, "pairings", state.currentPairingId);
+        pairingUnsubscribe = onSnapshot(pairingRef, (pairingSnap) => {
+          if (pairingSnap.exists() && currentState) {
+            currentState.streakCount = pairingSnap.data().streakCount || 0;
+            callback({ ...currentState });
+          }
+        }, (err) => {
+          console.error("Observe pairing failed:", err);
+        });
+      } else {
+        // Callback with current state if pairing listener is already active
+        callback({ ...state });
+      }
+    } else {
+      // Clean up pairing listener if no longer paired
+      if (pairingUnsubscribe) {
+        pairingUnsubscribe();
+        pairingUnsubscribe = null;
+      }
+      lastPairingId = null;
+      callback(state);
+    }
   }, (err) => {
     console.error("Observe user failed:", err);
   });
+
+  return () => {
+    userUnsubscribe();
+    if (pairingUnsubscribe) {
+      pairingUnsubscribe();
+    }
+  };
 }
 
 async function liveStartMatching(uid: string, category: HabitCategory, goal: string): Promise<void> {

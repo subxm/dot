@@ -3,6 +3,22 @@ import { motion, AnimatePresence } from 'motion/react'
 import { api, isDemoMode } from '../firebase'
 import type { UserState, Note } from '../firebase'
 
+function formatNoteTime(createdAt: any): string {
+  if (!createdAt) return "Recently";
+  let date: Date;
+  if (typeof createdAt.toDate === 'function') {
+    date = createdAt.toDate();
+  } else if (createdAt.seconds) {
+    date = new Date(createdAt.seconds * 1000);
+  } else {
+    date = new Date(createdAt);
+  }
+  if (isNaN(date.getTime())) {
+    return "Recently";
+  }
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
 interface DashboardProps {
   uid: string;
   userState: UserState;
@@ -258,7 +274,7 @@ export function Dashboard({ uid, userState, onOpenInfo }: DashboardProps) {
                 </div>
                 <div className="mt-8 pt-4 border-t border-black/5 flex items-center justify-between text-[11px] text-[#1a1a1a]/40 font-mono">
                   <span>Checked in</span>
-                  <span>{myNote?.createdAt ? new Date(myNote.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Recently"}</span>
+                  <span>{formatNoteTime(myNote?.createdAt)}</span>
                 </div>
               </div>
             ) : (
@@ -350,7 +366,7 @@ export function Dashboard({ uid, userState, onOpenInfo }: DashboardProps) {
             {canSeePeerNote && (
               <div className="pt-4 border-t border-black/5 flex items-center justify-between text-[11px] text-[#1a1a1a]/40 font-mono">
                 <span>Completed</span>
-                <span>{peerNote?.createdAt ? new Date(peerNote.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Recently"}</span>
+                <span>{formatNoteTime(peerNote?.createdAt)}</span>
               </div>
             )}
           </div>
